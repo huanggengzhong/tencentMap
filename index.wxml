@@ -1,0 +1,181 @@
+<!--pages/detail/index.wxml-->
+<view class='view-page'>
+<navbar page-name="{{title}}" style="height:{{navH}}px" class="nav"></navbar>
+  
+  <view class='page-content' style='height:calc(100vh - {{navH}}px)'>
+    <!--这里写下面的内容-->
+    <!-- 轮播图 -->
+    <view class='my-swiper'>
+      <!-- <swiper indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" bindchange="onSlideChangeEnd">
+        <block wx:for="{{houseDetail.images}}" wx:key="*index">
+          <swiper-item>
+            <image src="{{item}}" class="slide-image" width="355" height="150" bindtap="goPhoto" data-item="{{64}}" />
+          </swiper-item>
+        </block>
+      </swiper> -->
+      <!-- <view class="imageCount">{{current+1}}/{{houseDetail.images.length}}</view> -->
+      <image src='{{myImage}}' class="my-image" bindtap="goPhoto" data-item="{{64}}"></image>
+      <button class='my-button' bindtap="goPhoto" data-item="{{64}}">查看更多</button>
+    </view>
+    <!-- 楼盘 -->
+    <view class="loupan">
+      <view class="loupan-title">
+        {{houseDetail.name}}
+      </view>
+      <view class="loupan-child1">
+        <text class="{{index < 2?'green':'gray'}}" wx:for="{{houseDetail.quality}}" wx:key="quality">{{item}}</text>
+        <!-- <text class="green">地铁沿线</text>
+        <text class="gray">公交直达</text>
+        <text class="gray">绿化率高</text> -->
+      </view>
+      <view class="loupan-child2">
+        参考均价
+        <text class=" num1 space">{{houseDetail.unit_price}}</text>
+      </view>
+      <view class="loupan-child3">
+        <view>
+          开盘
+          <text class="space">{{time}}</text>
+        </view>
+        <view>
+          户型
+          <text class='space'>{{houseDetail.house_type}}</text>
+        </view>
+      </view>
+      <view class="loupan-child3">
+        <view>
+          建面
+          <text class="num space">{{houseDetail.square[0]}}-{{houseDetail.square[1]}} m</text>
+        </view>
+        <view>
+          产权
+          <text class="space">{{houseDetail.term_for_user}}</text>
+        </view>
+      </view>
+      <view class="loupan-child4">
+        地址:
+        <text class="space">{{houseDetail.address}}</text>
+      </view>
+      <view class="loupan-child4">
+        咨询:
+        <text class="blue space" bindtap='myCall' data-phone="{{houseDetail.hotline}}">{{houseDetail.hotline}}</text>
+      </view>
+      <navigator url="/pages/builddetail/index?id={{houseDetail.id}}">
+        <button class="my-btn">楼盘详细信息</button>
+      </navigator>
+    </view>
+    <!-- 购房福利 -->
+    <view class="goufang my-padding" hidden='{{houseDetail.buy_send == null ? true : false}}'>
+      <view class='my-title'>购房福利</view>
+      <view class='my-content'>
+        返成交结果的1% (参考可返
+        <text class="my-yellow">{{houseDetail.buy_send}} </text>饭票)
+      </view>
+    </view>
+    <!-- 荐房福利 -->
+    <view class="jianfang my-padding" hidden='{{houseDetail.welfare_buy == null && houseDetail.welfare_recommend == null ? true : false}}'>
+      <view class='my-title'>荐房福利
+        <text class="space">结佣时以实际佣金为准</text>
+      </view>
+      <view class='my-content'>
+        <view hidden='{{houseDetail.welfare_buy == null ? true : false}}'>推荐客户预约成功可得
+          <text>{{houseDetail.welfare_buy}}</text> 饭票 </view>
+        <view class="my-margin" hidden='{{houseDetail.welfare_recommend == null ? true : false}}'>推荐客户到场看房可得
+          <text>{{houseDetail.welfare_recommend}}</text> 饭票 </view>
+      </view>
+    </view>
+    <!-- 户型介绍 -->
+    <view class="huxing my-padding">
+      <view class='my-title'> 户型介绍 (
+        <text>{{huxingInfo.length}}</text>)</view>
+
+      <view class='my-content'>
+        <!-- 滚动还不是很完善,已搞定 -->
+        <scroll-view scroll-x="true" class="tab-h" scroll-left="{{scrollLeft}}">
+          <view class="tab-item" data-current="0" bindtap="swichNav" wx:for="{{huxingInfo}}" wx:key="index">
+            <view class="my-photo">
+              <image src="{{item.image}}"></image>
+              <view class="my-imageinfo">
+                <view class="child1">{{item.name}}</view>
+                <view class="child2">建面:
+                  <text>{{item.area}}㎡</text>
+                </view>
+                <view class="child3">
+                  <text wx:for="{{item.tags}}" wx:key="index">{{item}}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+
+        </scroll-view>
+
+      </view>
+    </view>
+    <!-- 项目介绍 -->
+    <view class="xiangmu my-padding">
+      <view class='my-title'>项目介绍</view>
+      <view class='my-content'>
+        {{houseDetail.describe}}
+      </view>
+    </view>
+    <!-- 周边配套 -->
+    <view class="zhoubian my-padding">
+      <view class='my-title'>周边配套</view>
+      <view class='my-content'>
+        <view class="my-map">
+          <!-- 地图有点小问题,真机不显示 -->
+          <!-- <map style="width: 100%; height: 300px;" latitude="{{latitude}}" longitude="{{longitude}}" markers="{{markers}}" covers="{{covers}}" controls="{{controls}}" scale="{{scale}}" bindcontroltap="tapControl" bindregionchange="regionchange">
+          </map> -->
+
+          <!-- 开始地图 -->
+
+
+          <!--地图容器-->
+          <map id="myMap" markers="{{markers}}" style="width:100%;height:300px;" controls="{{controls}}" scale="{{scale}}" latitude="{{latitude}}" longitude="{{longitude}}" bindcontroltap="tapControl">
+            <!-- <map id="myMap" markers="{{markers}}" style="width:100%;height:300px;"   covers="{{covers}}" controls="{{controls}}" scale="{{scale}}" latitude="{{latitude}}" longitude="{{longitude}}" bindcontroltap="tapControl"> -->
+          </map>
+          <!-- <button bindtap="nearby_search">搜索周边KFC</button> -->
+          <!-- 结束地图 -->
+        </view>
+        <view class="father">
+          <view class="my-child1 child" bindtap="nearby_search" data-value="公交站">
+            <image src="/lib/img/chezi@2x.png"></image>
+            <view>交通</view>
+          </view>
+          <view class="my-child2 child" bindtap="nearby_search" data-value="娱乐">
+            <image src="/lib/img/shenghuo@2x.png"></image>
+            <view>生活</view>
+          </view>
+          <view class="my-child3 child" bindtap="nearby_search" data-value="医疗">
+            <image src="/lib/img/yiliao@2x.png"></image>
+            <view>医疗</view>
+          </view>
+          <view class="my-child4 child" bindtap="nearby_search" data-value="学校">
+            <image src="/lib/img/xuexiao@2x.png"></image>
+            <view>学校</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <!-- 底部 -->
+    <view class="footer">
+
+      <view class="child1 ">
+        <!-- <image src="/lib/img/fanxiang@2x.png"></image>
+
+        <view>分享</view> -->
+        <button class='share' id="shareBtn" open-type="share" hover-class="other-button-hover">
+          <image src='/lib/img/fanxiang@2x.png'></image>
+          <view>分享</view> -->
+        </button>
+      </view>
+      <view class="child2">
+        <button class="button" bindtap='yuYue'>预约看房</button>
+      </view>
+      <view class="child3">
+        <button bindtap="goTuijian" data-id="{{houseDetail.id}}" data-title="{{houseDetail.name}}">推荐客户</button>
+      </view>
+    </view>
+    <van-dialog id="van-dialog" />
+  </view>
+</view>

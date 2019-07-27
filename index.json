@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "navbar": "/components/navbar/index",
+    "van-dialog":"/components/dist/dialog/index"
+  }
+
+}
